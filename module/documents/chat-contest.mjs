@@ -65,12 +65,14 @@ export class ChatContest {
             const overButton = html.find('button[name="over"]');
             const approveButton = html.find('button[name="approve"]');
             const rollButton = html.find('button[name="roll"]');
+            const rollNowButton = html.find('button[name="rollNow"]');
             const waitingForPlayer = context?.waitingForPlayer;
             const readyToRoll = context?.readyToRoll;
 
             overButton.on('click',e => ChatContest.Handlers.clickOverButton(e,chatMessage));
             approveButton.on('click',e => ChatContest.Handlers.clickApproveButton(e,chatMessage));
             rollButton.on('click',e => ChatContest.Handlers.clickRollButton(e,chatMessage,html));
+            rollNowButton.on('click',e => ChatContest.Handlers.clickRollNowButton(e,chatMessage,html));
             // html.on('blur','input, select',e => ChatContest.Handlers.blurField(e,chatMessage,html));
             html.on('blur','input[type="text"], input[type="number"]',e => ChatContest.Handlers.blurField(e,chatMessage,html));
             html.on('change','select',e => ChatContest.Handlers.blurField(e,chatMessage,html));
@@ -81,17 +83,21 @@ export class ChatContest {
                 rollButton.hide();  // never for GM
 
                 if (waitingForPlayer) {
-                    _disableAllControls(html);
-                    overButton.html(HTML_waitingForName);
+                    //_disableAllControls(html); - Don't disable controls for DM.
+                    overButton.html(HTML_waitingForName); // Show 'waiting for [Character]' on overButton.
+                    approveButton.hide(); // Hide the 'Approve Roll' button.
+
                 }
                 if (readyToRoll) {
                     _disableAllControls(html);
                     overButton.hide();
+                    rollNowButton.hide();
                     approveButton.html(HTML_rollApproved);
                 } 
             }
             else if (messageOwners.indexOf(user.id) > -1) { 
                 approveButton.hide();   // never for players
+                rollNowButton.hide();   // never for players
                 if (!waitingForPlayer) { 
                     // waiting for the GM
                     _disableAllControls(html);
@@ -130,11 +136,9 @@ export class ChatContest {
                 waitingForPlayer: game.user.isGM
             }
 
-            await socket.executeAsGM("sktSetChatFlag", messageID, flagDiff)
-                .catch(e => {
-                    ui.notifications.error(`${e.name}: ${e.message}`);
-                });
-                ui.chat.scrollBottom();
+            await socket.executeAsGM("sktSetChatFlag", messageID, flagDiff);
+            ChatContest.refreshChatMessage(chatMessage); 
+            ui.chat.scrollBottom();
         },  // clickOverButton
         
         async clickApproveButton(event,chatMessage) {
@@ -204,6 +208,11 @@ export class ChatContest {
             event.preventDefault();
             _resolveRoll(chatMessage);
         },  // clickRollButton()
+
+        async clickRollNowButton(event,chatMessage,html) {
+            event.preventDefault();
+            _resolveRoll(chatMessage);
+        },  // clickRollNowButton()
     }   // Handlers
 
 
@@ -448,10 +457,7 @@ async function _resolveRoll(chatMessage) {
             closed: true,       // close the card
         }
         // update the data store with the roll results
-        await socket.executeAsGM("sktSetChatFlag", chatMessage.id, flagDiff)
-            .catch(e => {
-                ui.notifications.error(`${e.name}: ${e.message}`);
-            }); 
+        await socket.executeAsGM("sktSetChatFlag", chatMessage.id, flagDiff); 
     }   // if !assured
     else {  // it's an assured contest
         let victory,defeat,cssClass,outcomeText;
@@ -477,18 +483,12 @@ async function _resolveRoll(chatMessage) {
             closed: true,       // close the card
         }
 
-        await socket.executeAsGM("sktSetChatFlag", chatMessage.id, flagDiff)
-            .catch(e => {
-                ui.notifications.error(`${e.name}: ${e.message}`);
-            });
+        await socket.executeAsGM("sktSetChatFlag", chatMessage.id, flagDiff);
 
     }
 
     ChatContest.refreshChatMessage(chatMessage); 
-    await socket.executeAsGM("sktUpdateChatMessage", chatMessage.id, {whisper: [], blind: false})
-        .catch(e => {
-            ui.notifications.error(`${e.name}: ${e.message}`);
-        }); //reveal to everyone
+    await socket.executeAsGM("sktUpdateChatMessage", chatMessage.id, {whisper: [], blind: false}); //reveal to everyone
 }   // _resolveRoll()
 
 function _updateChatMessage(chatMessage,formData) {
