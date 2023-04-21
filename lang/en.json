@@ -246,6 +246,25 @@
             "Successes": "Successes",
             "BenefitsLost": "Benefits Lost",
 
+            "difficulties": {
+                "Exceptional": "Exceptional",
+                "Punishing": "Punishing",
+                "Hard": "Hard",
+                "Challenging": "Challenging",
+                "Base": "Base",
+                "Straightforward": "Straightforward",
+                "Routine": "Routine",
+                "Easy": "Easy",
+                "Simple": "Simple",
+                
+                "NearlyImpossible": "Nearly Impossible",
+                "VeryHigh": "Very High",
+                "High": "High",
+                "Moderate": "Moderate",
+                "Low": "Low",
+                "VeryLow": "Very Low"
+            },
+
             "Ready": "Ready?",
             "WaitingForGM": "Waiting for GM…",
             "WaitingForPlayer": "Waiting for player…",

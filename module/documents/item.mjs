@@ -250,7 +250,7 @@ export class QuestWorldsItem extends Item {
                         let result = {};
                         let list = RatingHelper.getDifficultyTable();
                         for (const key of Object.keys(list)) {
-                            const name = list[key].name;
+                            const name = game.i18n.localize('QUESTWORLDS.chatcontest.difficulties.' + list[key].name.split(" ").join(""));
                             let mod = RatingHelper.format(list[key].modifier, 0,true,false);
                             mod = mod ? mod : '+0';
                             const min = list[key]?.min ? list[key].min : null;
