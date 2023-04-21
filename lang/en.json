@@ -267,7 +267,7 @@
 
             "Ready": "Ready?",
             "WaitingForGM": "Waiting for GM…",
-            "WaitingForPlayer": "Waiting for player…",
+            "WaitingFor": "Waiting for ",
             "ApproveRoll": "Approve Roll",
             "RollApproved": "Roll approved, waiting…",
             "Roll": "Roll",

@@ -55,9 +55,10 @@ export class ChatContest {
             if (!(context)) return; // not a contest chat card
             if (context?.closed) return;    // do nothing; the template took care of disabling the form
             const user = game.user;
+            const actorName = data.alias; //could also use chatMessage.speaker.alias
             const messageOwner = chatMessage.user.id;
 
-            const HTML_waitingForPlayer = '<i>'+ game.i18n.localize('QUESTWORLDS.chatcontest.WaitingForPlayer') +'</i>';
+            const HTML_waitingForName = '<i>'+ game.i18n.localize('QUESTWORLDS.chatcontest.WaitingFor') + actorName + '...' + '</i>';
             const HTML_waitingForGM = '<i>'+ game.i18n.localize('QUESTWORLDS.chatcontest.WaitingForGM') +'</i>';
             const HTML_rollApproved = '<i>'+ game.i18n.localize('QUESTWORLDS.chatcontest.RollApproved') +'</i>';
 
@@ -81,7 +82,7 @@ export class ChatContest {
 
                 if (waitingForPlayer) {
                     _disableAllControls(html);
-                    overButton.html(HTML_waitingForPlayer);
+                    overButton.html(HTML_waitingForName);
                 }
                 if (readyToRoll) {
                     _disableAllControls(html);
