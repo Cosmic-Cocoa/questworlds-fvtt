@@ -179,11 +179,17 @@ export class QuestWorldsItem extends Item {
                     // rating is just a bonus, so add to the parent (assumed a keyword)
                     let parent = QuestWorldsItem.getEmbedById(this.system.embeds,embed.parentId);
                     if(!parent) parent = item; // it's a breakout directly from an Item, not embed
-                    ({rating, masteries} = RatingHelper.add(
-                        {rating: rating, masteries: masteries},
-                        {rating: parent?.rating, masteries: parent?.masteries})
-                    );
-                    // console.log(RatingHelper.format(rating,masteries,true));
+                    if (item.system.variant == 'sidekick') {
+                        ({rating, masteries} = RatingHelper.add(
+                            {rating: rating, masteries: masteries},
+                            {rating: parent?.rating, masteries: parent?.masteries})
+                        );
+                    } else {
+                        ({rating, masteries} = RatingHelper.add(
+                            {rating: rating, masteries: masteries},
+                            {rating: parent?.system.rating, masteries: parent?.system.masteries})
+                        );
+                    }
                 }
                 fullRating = RatingHelper.format(rating,masteries);
 
